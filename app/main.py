@@ -2,25 +2,31 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
+from models import Person
 
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 templates = Jinja2Templates(directory="frontend/templates")
 
-class Word(BaseModel):
-    word: str
-
 @app.get("/")
 def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.post("/predict")
-def predict_length(word: Word):
-    length = len(word.word)
-    result = {"length": length}
-    return result
+@app.post("/metrics")
+def get_metrics(person: Person):
+
+    # Query the Azure Lakehouse and retrieve Person's metrics
+    # Perform necessary data processing and calculations
+
+    height = 180
+    weight = 70
+    ranking = 9
+    metrics = {"name":person.name,
+               "height":height,
+               "weight":weight,
+               "Outlier Ranking":ranking}
+    return metrics
 
 
 if __name__ == "__main__":
